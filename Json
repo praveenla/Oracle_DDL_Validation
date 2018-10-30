@@ -1,0 +1,41 @@
+#!/usr/bin/python
+import json
+import os
+
+os.chdir('C:\Python3.7\Json')
+
+arr = os.listdir('C:\Python3.7\Json')
+
+for listdir1 in arr:
+    with open(listdir1) as f:
+        data = json.load(f)
+        print(listdir1)
+
+    if 'Name' not in data:
+        print('No Name details')
+    else:
+        print(data['Name'])
+
+    if 'Emails' not in data:
+        print('No Emails details')
+    else:
+        for Email in data['Emails']:
+            print(Email)
+
+    if 'SkillRatings' not in data:
+        print('No SkillRatings details')
+    else:
+        for SkillRating in data['SkillRatings']:
+            print(SkillRating)
+
+    if 'PhoneNos' not in data:
+        print('No PhoneNos details')
+    else:
+        for PhoneNo in data['PhoneNos']:
+            print(PhoneNo)
+
+    if 'Education' not in data:
+        print('No Education details')
+    else:
+        for Educations in data['Education']:
+            print(Educations)
