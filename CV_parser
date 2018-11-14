@@ -1,0 +1,47 @@
+import docx 
+import re
+import os
+from nltk import pos_tag,word_tokenize,sent_tokenize,ne_chunk,RegexpParser
+path="C:/Users/m39881/Desktop/Profiles/"
+doc_list=os.listdir(path)
+def get_name(lines):
+    namehits=[]
+    grammar = r'NAME: {<NN.*><NN.*><NN.*>*}'
+    indianNames = open("allNames.txt", "r").read().lower()
+    indianNames = set(indianNames.split())
+    chunkParser = RegexpParser(grammar)
+    for tagged_tokens in lines:
+        chunked_tokens=chunkParser.parse(tagged_tokens)
+        for subtree in chunked_tokens.subtrees():
+            if subtree.label()=='NAME':
+                for ind,leaf in enumerate(subtree.leaves()):
+                    if leaf[0].lower() in indianNames and 'NN' in leaf[1]:
+                        hit=" ".join ([el[0] for el in subtree.leaves()[ind:ind+3]])
+                        namehits.append(hit)
+    
+    return(namehits[0])
+
+for d in doc_list:
+    name,info=[],[]
+    try:
+        wholedoc=''
+        doc=docx.Document(path+d)
+        for para in doc.paragraphs:
+            wholedoc += para.text
+        #print(wholedoc)
+        lines = [el.strip() for el in wholedoc.split("\n") if len(el) > 0]  # Splitting on the basis of newlines 
+        lines = [word_tokenize(el) for el in lines]    # Tokenize the individual lines
+        lines = [pos_tag(el) for el in lines]
+        match=re.search('\S+@\S+', wholedoc)
+        email=(match.group(0))
+        info.append(get_name(lines))
+        info.append(email)
+        match=re.search(r'[\+\(]?[1-9][0-9 .\-\(\)]{8,}[0-9]',wholedoc)
+        phone=(match.group(0))
+        info.append(phone)
+        print(info)
+    except:
+        #print("Not a Word file:",d)
+        continue
+        
+   
